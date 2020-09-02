@@ -1,10 +1,9 @@
-package TicTacToe;
-
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 /**
  * @author Felix Mann
@@ -14,6 +13,7 @@ import java.awt.event.MouseEvent;
 
 public class TicTacToe extends JFrame {
     private JPanel mainPanel;
+    private JPanel fieldPanel;
     private String[][] field = {
             {" ", " ", " "},
             {" ", " ", " "},
@@ -26,6 +26,7 @@ public class TicTacToe extends JFrame {
 
     private TicTacToe(){
         mainPanel = new JPanel();
+        fieldPanel = new JPanel();
         table = new JTable(field, hoch){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -34,6 +35,8 @@ public class TicTacToe extends JFrame {
         };
 
         init();
+
+        paintImages();
 
         setTitle("TicTacToe");
         pack();
@@ -53,24 +56,72 @@ public class TicTacToe extends JFrame {
         getContentPane().add(mainPanel);
 
         mainPanel.setLayout(new BorderLayout(10,10));
-        mainPanel.setPreferredSize(new Dimension(300,300));
-        mainPanel.add(table, BorderLayout.CENTER);
+        mainPanel.setPreferredSize(new Dimension(600,600));
+        mainPanel.setBackground(Color.BLACK);
+        mainPanel.add(fieldPanel, BorderLayout.CENTER);
 
-        table.addMouseListener(new MouseAdapter() {
+        fieldPanel.setLayout(new GridLayout(3,3));
+
+        fieldPanel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
                 if (cnt == 9){
                     makeZ();
                     fertig();
-                }
-                if (field[table.getSelectedRow()][table.getSelectedColumn()].equals(" ")){
-                    field[table.getSelectedRow()][table.getSelectedColumn()] = String.valueOf(currentPlayer);
-                    checKTicTacToe();
-                    playerChange();
-                    cnt++;
+                } else {
+                    int posY = getPosField(e.getY());
+                    int posX = getPosField(e.getX());
+
+                    if (field[posY][posX].equals(" ")){
+                        field[posY][posX] = String.valueOf(currentPlayer);
+                        checKTicTacToe();
+                        playerChange();
+                        cnt++;
+                        paintImages();
+                    }
                 }
             }
         });
+    }
+
+    private int getPosField(double Pos){
+        switch ((int) Math.floor(Pos / 100)){
+            case 0:
+            case 1:
+                return 0;
+            case 2:
+            case 3:
+                return 1;
+            case 4:
+            case 5:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
+    private void paintImages(){
+        fieldPanel.removeAll();
+        URL path;
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 3; x++) {
+                if (field[y][x].equals("X")){
+                    path = getClass().getResource("X.png");
+                } else if (field[y][x].equals("O")){
+                        path = getClass().getResource("O.png");
+                } else {
+                    path = getClass().getResource("_.png");
+                }
+                ImageIcon icon = new ImageIcon(path);
+                Image image = icon.getImage();
+                Image newImg = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(newImg);
+                JLabel img = new JLabel();
+                img.setIcon(icon);
+                fieldPanel.add(img);
+            }
+        }
+        fieldPanel.revalidate();
     }
 
     private void playerChange(){
@@ -106,7 +157,13 @@ public class TicTacToe extends JFrame {
     }
 
     private void fertig(){
-        System.out.println("Spieler " + currentPlayer + " gewinnt.");
+        String msg;
+        if (currentPlayer == 'Z'){
+            msg = "Draw";
+        } else {
+            msg = "Spieler " + currentPlayer + " gewinnt.";
+        }
+        JOptionPane.showMessageDialog(this, msg);
         new TicTacToe();
         this.dispose();
     }
