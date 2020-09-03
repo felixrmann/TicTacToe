@@ -103,10 +103,11 @@ public class TicTacToe extends JFrame {
                 }
                 ImageIcon icon = new ImageIcon(path);
                 Image image = icon.getImage();
-                Image newImg = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                Image newImg = image.getScaledInstance(198, 198, Image.SCALE_SMOOTH);
                 icon = new ImageIcon(newImg);
                 JLabel img = new JLabel();
                 img.setIcon(icon);
+                img.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 fieldPanel.add(img);
             }
         }
