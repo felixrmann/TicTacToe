@@ -12,6 +12,7 @@ import java.net.URL;
 
 public class TicTacToe extends JFrame {
     private boolean finish;
+    private static int winX, winO;
     private JPanel mainPanel;
     private JPanel fieldPanel;
     private String[][] field = {
@@ -152,11 +153,21 @@ public class TicTacToe extends JFrame {
         if (currentPlayer == 'Z'){
             msg = "Draw";
         } else {
-            msg = "Spieler " + currentPlayer + " gewinnt.";
+            if (currentPlayer == 'X'){
+                winX++;
+            } else winO++;
+
+            msg = "Spieler " + currentPlayer + " gewinnt zum " + getWinAmount(currentPlayer) + ". Mal.";
         }
         JOptionPane.showMessageDialog(this, msg);
         new TicTacToe();
         this.dispose();
+    }
+
+    public int getWinAmount(char winner){
+        if (winner == 'X') return winX;
+        if (winner == 'O') return winO;
+        return 0;
     }
 
     public static void main(String[] args) {
